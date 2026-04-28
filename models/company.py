@@ -16,7 +16,7 @@ class Company(User):
         '''
         duplicate_internship = [
             i for i in all_internships
-            if i._company_id == self._user_id and i._title = title
+            if i._company_id == self._user_id and i._title == title
         ]
         if len(duplicate_internship) > 0:
             return "You already posted an internship with this title!"
