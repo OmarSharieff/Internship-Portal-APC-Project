@@ -34,7 +34,7 @@ class Company(User):
         my_internship_ids = [i._internship_id for i in all_internships
                              if i._company_id == self._user_id]
         
-        my_apps = [a for a in all_internships
+        my_apps = [a for a in all_applications
                    if a._intership_id in my_internship_ids]
         
         return my_apps
@@ -50,7 +50,7 @@ class Company(User):
         if application._status == "rejected":
             return "Cannot approved already rejected application"
         
-        application._status == "approved"
+        application._status = "approved"
         application._notes = notes
         return application
         
@@ -60,7 +60,7 @@ class Company(User):
         # business logic is inverse of approve()
         if application._status == "rejected":
             return "Application is already rejected"
-        if application._status == "accepted":
+        if application._status == "approved":
             return "Cannot reject already approved application"
         
         application._status = "rejected"

@@ -7,7 +7,7 @@ from models.application import Application
 
 # --- Setup dummy data ---
 student = Student(1, "Alice", "alice@gmail.com", "pass123", "MIT", 3.8, "resume.pdf")
-company = Company(2, "TechCorp", "tech@corp.com", "pass123", "TechCorp Ltd", "Software", "NYC")
+company = Company(2, "TechCorp", "tech@corp.com", "pass123", "Software", "NYC")
 instructor = Instructor(3, "Dr. Smith", "smith@uni.com", "pass123", "CS Department", ["OOP", "DSA"])
 
 internship1 = Internship(1, "Backend Intern", "Work on APIs", 2, "2025-12-31", True)

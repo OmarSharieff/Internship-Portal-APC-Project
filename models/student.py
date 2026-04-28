@@ -17,11 +17,11 @@ class Student(User):
     def apply(self, internship, all_applications: list):
         already_applied = [
             a for a in all_applications
-            if a.student_id == self.user_id and a.internship_id == internship.internship_id
+            if a._student_id == self._user_id and a._internship_id == internship._internship_id
         ]
         if len(already_applied) > 0:
             return "Already applied to this internship."
-        if not internship.is_open:
+        if not internship._is_open:
             return "This internship is closed."
         if internship.deadline < date.today().isoformat():
             return "Deadline has passed."
