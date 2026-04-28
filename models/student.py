@@ -29,5 +29,7 @@ class Student(User):
         return Application(student_id=self.user_id, internship_id=internship.internship_id)
         
 
-    def view_apps():
-        pass
+    def view_apps(self, all_applications: list):
+        # same logic
+        my_apps= [a for a in all_applications if a._student_id == self._user_id]
+        return sorted(my_apps, key=lambda a: a._applied_at, reverse=True) #ordering by recently applied
