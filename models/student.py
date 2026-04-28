@@ -1,6 +1,6 @@
-from user import User
+from models.user import User
 from datetime import date
-from application import Application
+from models.application import Application
 
 class Student(User):
     def __init__(self, user_id, name, email, password, university, gpa, resume):

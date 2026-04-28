@@ -1,4 +1,3 @@
-from datetime import date
 
 class Internship:
     def __init__(self, internship_id, title, description, company_id, deadline, is_open=True):

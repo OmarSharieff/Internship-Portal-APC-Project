@@ -1,5 +1,5 @@
-from user import User
-from internship import Internship
+from models.user import User
+from models.internship import Internship
 from datetime import date
 
 class Company(User):
