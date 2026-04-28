@@ -26,7 +26,8 @@ class Student(User):
         if internship._deadline < date.today().isoformat():
             return "Deadline has passed."
 
-        return Application(student_id=self.user_id, internship_id=internship.internship_id)
+        #TODO: app_id=None is only for test purposes. Remove this when database is integrated
+        return Application(app_id=None, student_id=self._user_id, internship_id=internship._internship_id)
         
 
     def view_apps(self, all_applications: list):

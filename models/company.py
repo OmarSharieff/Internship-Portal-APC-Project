@@ -35,7 +35,7 @@ class Company(User):
                              if i._company_id == self._user_id]
         
         my_apps = [a for a in all_applications
-                   if a._intership_id in my_internship_ids]
+                   if a._internship_id in my_internship_ids]
         
         return my_apps
 
