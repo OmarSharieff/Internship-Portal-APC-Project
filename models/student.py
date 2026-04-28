@@ -12,7 +12,7 @@ class Student(User):
     def view_intern(self, all_internships: list):
         # This business logic code is written prior to sqlite3 schema setup assuming Internship class to have deadline and 'is_open' attributes.
         # NOTE: isoformat() is used for comparing date. Do not change the format otherwise it will break the logic!
-        return [i for i in all_internships if i.is_open and i.deadline >= date.today().isoformat()]
+        return [i for i in all_internships if i._is_open and i._deadline >= date.today().isoformat()]
         
     def apply(self, internship, all_applications: list):
         already_applied = [
@@ -23,7 +23,7 @@ class Student(User):
             return "Already applied to this internship."
         if not internship._is_open:
             return "This internship is closed."
-        if internship.deadline < date.today().isoformat():
+        if internship._deadline < date.today().isoformat():
             return "Deadline has passed."
 
         return Application(student_id=self.user_id, internship_id=internship.internship_id)

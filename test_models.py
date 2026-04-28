@@ -1,9 +1,9 @@
-from models.user import User
+# from models.user import User
 from models.student import Student
 from models.company import Company
 from models.instructor import Instructor
 from models.internship import Internship
-from models.application import Application
+# from models.application import Application
 
 # --- Setup dummy data ---
 student = Student(1, "Alice", "alice@gmail.com", "pass123", "MIT", 3.8, "resume.pdf")
