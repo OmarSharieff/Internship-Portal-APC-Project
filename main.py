@@ -1,5 +1,6 @@
 from database.db_setup import db_init
 from database.db_helper import insert_user, fetch_internships, insert_internship
+from ui.login_screen import Login
 
 def main():
     db_init()
@@ -33,6 +34,10 @@ def main():
     # Get some information anbout internship
     for internship in internships: 
         print(f"ID: {internship[0]}, Title: {internship[1]}, Deadline: {internship[4]}")
+
+    print("\nStarting the graphical interface...")
+    app = Login()
+    app.login_screen.mainloop()
 
 if __name__ == "__main__":
     main()
