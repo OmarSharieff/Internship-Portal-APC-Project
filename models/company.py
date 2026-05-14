@@ -2,64 +2,69 @@ from models.user import User
 from models.internship import Internship
 from datetime import date
 
+
 class Company(User):
     def __init__(self, user_id, name, email, password, industry, location):
-        super().__init__(user_id, name, email, password) #resuing parent initialization
+        super().__init__(user_id, name, email, password)
         self._industry = industry
         self._location = location
 
     def post_intern(self, title, description, deadline, all_internships: list):
-        #business logic
-        '''
-        step1: check for already existing internship and valid deadline
-        step2: otherwise, post an internship
-        '''
-        duplicate_internship = [
-            i for i in all_internships if i._company_id == self._user_id and i._title == title
+
+        duplicate = [
+            i for i in all_internships
+            if i._company_id == self._user_id and i._title == title
         ]
-        if len(duplicate_internship) > 0:
-            return "Internship with this title is already posted!"
+
+        if duplicate:
+            return "Internship already exists."
+
         if deadline < date.today().isoformat():
-            return "Deadline cannot be in the past!"
-        
-        return Internship(title=title, description=description, company_id=self._user_id, deadline=deadline)
+            return "Deadline cannot be in the past."
+
+        return Internship(
+            internship_id=None,
+            title=title,
+            description=description,
+            company_id=self._user_id,
+            deadline=deadline
+        )
 
     def view_apps(self, all_applications: list, all_internships: list):
-        #business logic
-        '''
-        step1: fetch all internships belonging to this company
-        step2: filter applications for the fetched internships
-        '''
-        my_internship_ids = [i._internship_id for i in all_internships if i._company_id == self._user_id]
-        
-        my_apps = [a for a in all_applications if a._internship_id in my_internship_ids]
-        
-        return my_apps
+
+        my_internship_ids = [
+            i._internship_id
+            for i in all_internships
+            if i._company_id == self._user_id
+        ]
+
+        return [
+            a for a in all_applications
+            if a._internship_id in my_internship_ids
+        ]
 
     def approve(self, application, notes=""):
-        # business logic
-        '''
-        step1: check application status and return accordingly
-        step2: otherwise, approve application and assign notes
-        '''
+
         if application._status == "approved":
-            return "Application already approved"
+            return "Application already approved."
+
         if application._status == "rejected":
-            return "Cannot approved already rejected application"
-        
+            return "Cannot approve rejected application."
+
         application._status = "approved"
         application._notes = notes
-        return application
-        
 
+        return application
 
     def reject(self, application, notes=""):
-        # business logic is inverse of approve()
+
         if application._status == "rejected":
-            return "Application is already rejected"
+            return "Application already rejected."
+
         if application._status == "approved":
-            return "Cannot reject already approved application"
-        
+            return "Cannot reject approved application."
+
         application._status = "rejected"
         application._notes = notes
+
         return application

@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
-import sqlite3
-from database.db_setup import PATH
 
+from database.db_helper import fetch_user
 
 from ui.student_dashboard import StudentDashboard
 from ui.company_dashboard import CompanyDashboard
@@ -10,63 +9,68 @@ from ui.instructor_dashboard import InstructorDashboard
 
 
 class Login:
-    def __init__(self):
-        self.login_screen = tk.Tk()
-        self.login_screen.title('Login Page')
-        self.login_screen.geometry("350x250") 
-        
-        
-        self.login_screen.resizable(False, False)
-        
 
-        # keep info in center
-        container = tk.Frame(self.login_screen)
+    def __init__(self):
+
+        self.root = tk.Tk()
+
+        self.root.title("Login")
+        self.root.geometry("350x250")
+        self.root.resizable(False, False)
+
+        container = tk.Frame(self.root)
         container.place(relx=0.5, rely=0.5, anchor="center")
-        tk.Label(container, text='Email').pack(pady=(0, 5))
-        self.email_entry = tk.Entry(container)
+
+        tk.Label(container, text="Email").pack(pady=(0, 5))
+
+        self.email_entry = tk.Entry(container, width=30)
         self.email_entry.pack(pady=(0, 10))
-        
-        tk.Label(container, text='Password').pack(pady=(0, 5))
-        self.password_entry = tk.Entry(container, show='*')
+
+        tk.Label(container, text="Password").pack(pady=(0, 5))
+
+        self.password_entry = tk.Entry(container, show="*", width=30)
         self.password_entry.pack(pady=(0, 15))
 
-        self.login_btn = tk.Button(container, text='Login', command=self.login, width=15)
-        self.login_btn.pack()
-
-        self.login_screen.mainloop()
+        tk.Button(
+            container,
+            text="Login",
+            width=15,
+            command=self.login
+        ).pack()
 
     def login(self):
-    con = sqlite3.connect(PATH)
-    cursor = con.cursor()
 
-    email = self.email_entry.get()
-    password = self.password_entry.get()
+        email = self.email_entry.get().strip()
+        password = self.password_entry.get().strip()
 
-    cursor.execute(
-        'SELECT * FROM users WHERE email=? AND password=?',
-        (email, password)
-    )
+        user = fetch_user(email, password)
 
-    user = cursor.fetchone()
+        if not user:
+            messagebox.showerror(
+                "Login Failed",
+                "Invalid email or password."
+            )
+            return
 
-    if user:
         self.open_dashboard(user)
-    else:
-        messagebox.showerror(
-            'Unable to login',
-            'Invalid email or password'
-        )
 
-    con.close()
     def open_dashboard(self, user):
-        self.login_screen.destroy()
-        role = user[4].lower() 
 
-        if role == 'student':
+        role = user[4].lower()
+
+        self.root.destroy()
+
+        if role == "student":
             StudentDashboard(user)
-        elif role == 'company':
+
+        elif role == "company":
             CompanyDashboard(user)
-        elif role == 'instructor':
+
+        elif role == "instructor":
             InstructorDashboard(user)
+
         else:
-            messagebox.showerror("Error", f"Unknown role found: {role}")
+            messagebox.showerror(
+                "Error",
+                f"Unknown role: {role}"
+            )

@@ -1,22 +1,59 @@
 import tkinter as tk
 
+from database.db_helper import execute_query
+
+
 class InstructorDashboard:
+
     def __init__(self, user):
-        self.instructor_dashboard  = tk.Tk()
-        self.instructor_dashboard.title(f"Instructor Dashboard - {user[1]}")
-        self.instructor_dashboard.geometry("350x250")
 
-        
-        self.instructor_dashboard.resizable(False, False) 
-        
-        
-        container = tk.Frame(self.instructor_dashboard)
-        container.place(relx=0.5, rely=0.5, anchor="center")
-        
-        
-        tk.Label(container, text=f"Instructor: {user[1]}").pack(pady=20)
+        self.root = tk.Tk()
 
-        tk.Button(container, text="Monitor Students", width=25).pack(pady=10)
-        tk.Button(container, text="Application Outcomes", width=25).pack(pady=10)
+        self.root.title(f"Instructor Dashboard - {user[1]}")
+        self.root.geometry("500x400")
 
-        self.instructor_dashboard.mainloop()
+        container = tk.Frame(self.root)
+        container.pack(pady=30)
+
+        tk.Label(
+            container,
+            text=f"Instructor: {user[1]}",
+            font=("Arial", 14)
+        ).pack(pady=20)
+
+        tk.Button(
+            container,
+            text="View All Applications",
+            width=25,
+            command=self.view_all
+        ).pack(pady=10)
+
+        self.root.mainloop()
+
+    def view_all(self):
+
+        query = """
+        SELECT users.name,
+               internships.title,
+               applications.status
+        FROM applications
+        JOIN users
+        ON applications.student_id = users.user_id
+        JOIN internships
+        ON applications.internship_id = internships.internship_id
+        """
+
+        apps = execute_query(query, fetch=True)
+
+        window = tk.Toplevel(self.root)
+        window.geometry("600x400")
+
+        for app in apps:
+
+            text = (
+                f"Student: {app[0]} | "
+                f"Internship: {app[1]} | "
+                f"Status: {app[2]}"
+            )
+
+            tk.Label(window, text=text).pack(pady=5)

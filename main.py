@@ -1,43 +1,82 @@
 from database.db_setup import init_db
-from database.db_helper import insert_user, fetch_internships, insert_internship
+from database.db_helper import (
+    insert_user,
+    insert_internship,
+    fetch_internships
+)
+
 from ui.login_screen import Login
 
-def main():
-    init_db()
-    
-    print("Test the App")
-    
-    # Add a user 
-    try:
-        user_id = insert_user("Sepideh mahmoodi", "sepideh.mahmoodi.ghaem@vub.be", "SepidehVUB", "student")
-        print(f"User created with ID: {user_id}")
-    except Exception as e:
-        print(f"This User already exists: {e}")
+
+def seed_data():
 
     try:
-      company_id = insert_user("Toyota", "toyota.recruit@toyota.be", "Toyotarecruit", "company")
-      print(f"Company created with ID: {company_id}")
-    except Exception as e:
-      print(f"Company already exists: {e}")
+        student_id = insert_user(
+            "Sepideh Mahmoodi",
+            "sepideh.mahmoodi.ghaem@vub.be",
+            "SepidehVUB",
+            "student"
+        )
 
-    # Add an internship
+        print(f"Student created: {student_id}")
+
+    except Exception as e:
+        print(f"Student exists: {e}")
+
     try:
-        internship_id = insert_internship("ML Engineer Intern", "Develope data-driven solutions", company_id, "2026-5-01")
-        print(f"Internship created with ID: {internship_id}")
-    except Exception as e:
-        print(f"Failed to create internship: {e}")
+        company_id = insert_user(
+            "Toyota",
+            "toyota.recruit@toyota.be",
+            "Toyotarecruit",
+            "company"
+        )
 
-    # Fetch data to verify
+        print(f"Company created: {company_id}")
+
+    except Exception as e:
+
+        print(f"Company exists: {e}")
+
+        company_id = 2
+
+    try:
+
+        internship_id = insert_internship(
+            "ML Engineer Intern",
+            "Develop data-driven solutions",
+            company_id,
+            "2026-05-01"
+        )
+
+        print(f"Internship created: {internship_id}")
+
+    except Exception as e:
+
+        print(f"Internship exists: {e}")
+
     internships = fetch_internships()
-    print(f"Total internships in Database are: {len(internships)}")
-    
-    # Get some information anbout internship
-    for internship in internships: 
-        print(f"ID: {internship[0]}, Title: {internship[1]}, Deadline: {internship[4]}")
 
-    print("\nStarting the graphical interface...")
+    print(f"\nTotal internships: {len(internships)}")
+
+    for internship in internships:
+
+        print(
+            f"ID: {internship[0]}, "
+            f"Title: {internship[1]}, "
+            f"Deadline: {internship[4]}"
+        )
+
+
+def main():
+
+    init_db()
+
+    seed_data()
+
     app = Login()
-    app.login_screen.mainloop()
+
+    app.root.mainloop()
+
 
 if __name__ == "__main__":
     main()
