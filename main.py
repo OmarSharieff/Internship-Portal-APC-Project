@@ -1,9 +1,9 @@
-from database.db_setup import db_init
+from database.db_setup import init_db
 from database.db_helper import insert_user, fetch_internships, insert_internship
 from ui.login_screen import Login
 
 def main():
-    db_init()
+    init_db()
     
     print("Test the App")
     
