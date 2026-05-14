@@ -22,9 +22,9 @@ class Login:
         # keep info in center
         container = tk.Frame(self.login_screen)
         container.place(relx=0.5, rely=0.5, anchor="center")
-        tk.Label(container, text='Username').pack(pady=(0, 5))
-        self.username_entry = tk.Entry(container)
-        self.username_entry.pack(pady=(0, 10))
+        tk.Label(container, text='Email').pack(pady=(0, 5))
+        self.email_entry = tk.Entry(container)
+        self.email_entry.pack(pady=(0, 10))
         
         tk.Label(container, text='Password').pack(pady=(0, 5))
         self.password_entry = tk.Entry(container, show='*')
@@ -36,22 +36,28 @@ class Login:
         self.login_screen.mainloop()
 
     def login(self):
-        con = sqlite3.connect(PATH)
-        cursor = con.cursor()
+    con = sqlite3.connect(PATH)
+    cursor = con.cursor()
 
-        username = self.username_entry.get()
-        password = self.password_entry.get()
+    email = self.email_entry.get()
+    password = self.password_entry.get()
 
-        cursor.execute('SELECT * FROM users WHERE name=? AND password=?',(username,password))
-        user = cursor.fetchone()
+    cursor.execute(
+        'SELECT * FROM users WHERE email=? AND password=?',
+        (email, password)
+    )
 
-        if user:
-            self.open_dashboard(user)
-        else:
-            messagebox.showerror('Unable to login','Invalid username or password')
+    user = cursor.fetchone()
 
-        con.close()
+    if user:
+        self.open_dashboard(user)
+    else:
+        messagebox.showerror(
+            'Unable to login',
+            'Invalid email or password'
+        )
 
+    con.close()
     def open_dashboard(self, user):
         self.login_screen.destroy()
         role = user[4].lower() 
