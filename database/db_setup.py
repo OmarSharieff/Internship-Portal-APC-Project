@@ -2,9 +2,9 @@ import sqlite3
 import os
 
 
-PATH = os.path.join('database', 'internship_databse.db')
+PATH = os.path.join('database', 'internship_portal.db')
 
-def db_init():
+def init_db():
    
     con = sqlite3.connect(PATH)
     cursor = con.cursor()
