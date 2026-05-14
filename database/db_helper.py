@@ -50,3 +50,5 @@ def delete_internship(internship_id):
 def update_status(app_id, new_status):
     query = "UPDATE applications SET status = ? WHERE app_id = ?"
     execute_query(query, (new_status, app_id), commit=True)
+# This file centralizes all CRUD operations
+
