@@ -57,3 +57,9 @@ print(f"Expected error string, Got: {result}")
 print("\n=== Close Internship ===")
 print(internship1.close())
 print(internship1.close())  # should return already closed message
+
+# --- Test applying to a closed internship ---
+print("\n=== Apply to Closed Internship ===")
+internship1.close()  # company closes the internship
+result = student.apply(internship1, all_applications)
+print(f"Expected error string, Got: {result}")  # should say "This internship is closed."
