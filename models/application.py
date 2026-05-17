@@ -11,9 +11,10 @@ class Application:
 
     def update_status(self, new_status):
         allowed = ["pending", "under_review", "approved", "rejected"]
-        valid = [s for s in allowed if s == new_status]
-        if len(valid) == 0:
+        
+        if new_status not in allowed:
             return "Invalid status."
+        
         if self._status == new_status:
             return f"Application is already {new_status}."
         
