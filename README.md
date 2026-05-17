@@ -125,45 +125,48 @@ User  (abstract base class)
 ┌─────────────────────────────────────┐
 │           «abstract» User           │
 ├─────────────────────────────────────┤
-│ – user_id : int                     │
-│ – name    : str                     │
-│ – email   : str                     │
-│ – password: str                     │
+│ # _user_id  : int                   │
+│ # _name     : str                   │
+│ # _email    : str                   │
+│ # _password : str                   │
 ├─────────────────────────────────────┤
-│ + login() : bool                    │
+│ + login(email, password) : bool     │
 └──────────────┬──────────────────────┘
                │ inherits
        ┌───────┼──────────────┐
        ▼       ▼              ▼
-┌──────────────┐  ┌─────────────────┐  ┌──────────────────────┐
-│   Student    │  │    Company      │  │     Instructor       │
-├──────────────┤  ├─────────────────┤  ├──────────────────────┤
-│ –student_id  │  │ –company_id     │  │ –instructor_id       │
-│ –university  │  │ –company_name   │  │ –department          │
-│ –gpa         │  │ –industry       │  │ –courses : list      │
-│ –resume      │  │ –location       │  ├──────────────────────┤
-├──────────────┤  ├─────────────────┤  │ +view_all_apps()     │
-│ +view_intern │  │ +post_intern()  │  │ +monitor_students()  │
-│ +apply()     │  │ +view_apps()    │  │ +generate_report()   │
-│ +view_apps() │  │ +approve()      │  └──────────────────────┘
-└──────┬───────┘  │ +reject()       │
-       │          └────────┬────────┘
-       │ applies           │ posts
-       ▼                   ▼
-┌──────────────────┐   ┌─────────────────────┐
-│   Application    │◆──│    Internship        │
-├──────────────────┤   ├─────────────────────┤
-│ –app_id          │   │ –internship_id       │
-│ –student_id (FK) │   │ –title               │
-│ –intern_id  (FK) │   │ –description         │
-│ –status          │   │ –company_id (FK)     │
-│ –applied_at      │   │ –deadline            │
-│ –notes           │   │ –is_open : bool      │
-├──────────────────┤   ├─────────────────────┤
-│ +update_status() │   │ +get_details()       │
-│ +get_approved()  │   │ +close()             │
-└──────────────────┘   └─────────────────────┘
+┌──────────────────┐  ┌──────────────────────┐  ┌──────────────────────┐
+│     Student      │  │       Company        │  │      Instructor      │
+├──────────────────┤  ├──────────────────────┤  ├──────────────────────┤
+│ – _university    │  │ – _industry          │  │ – _department        │
+│ – _gpa           │  │ – _location          │  │ – _courses : list    │
+│ – _resume        │  ├──────────────────────┤  ├──────────────────────┤
+├──────────────────┤  │ + post_intern()      │  │ + view_all_apps()    │
+│ + view_intern()  │  │ + view_apps()        │  │ + monitor_students() │
+│ + apply()        │  │ + approve()          │  │ + generate_report()  │
+│ + view_apps()    │  │ + reject()           │  └──────────────────────┘
+└────────┬─────────┘  └──────────┬───────────┘
+         │ applies               │ posts
+         ▼                       ▼
+┌──────────────────────┐   ┌─────────────────────────┐
+│     Application      │◆──│       Internship         │
+├──────────────────────┤   ├─────────────────────────┤
+│ – _app_id            │   │ – _internship_id         │
+│ – _student_id (FK)   │   │ – _title                 │
+│ – _internship_id (FK)│   │ – _description           │
+│ – _status            │   │ – _company_id (FK)       │
+│ – _applied_at        │   │ – _deadline              │
+│ – _notes             │   │ – _is_open : bool        │
+├──────────────────────┤   ├─────────────────────────┤
+│ + update_status()    │   │ + get_details()          │
+│ + get_approved()     │   │ + close()                │
+└──────────────────────┘   └─────────────────────────┘
 ```
+
+> **Note on the diagram:** `Student`, `Company`, and `Instructor` do **not** have
+> their own `_id` fields. They all inherit `_user_id` from `User`. The `_name`
+> attribute also comes from `User` — `Company` does not have a separate
+> `_company_name` field.
 
 ### Application Status Flow
 
@@ -188,10 +191,13 @@ Student applies
 | Concept | Where It's Used |
 |---|---|
 | **Inheritance** | `Student`, `Company`, `Instructor` all extend the `User` base class |
-| **Encapsulation** | All attributes are private (`self.__name`), accessed via methods |
-| **Abstraction** | `User` is never instantiated directly — only subclasses are used |
+| **Encapsulation** | All attributes are protected (`self._name`), accessed via methods |
+| **Abstraction** | `User` is never instantiated directly — only subclasses are used (`ABC`) |
 | **Composition** | An `Application` cannot exist without a linked `Internship` |
-| **List Comprehensions** | Filtering approved apps: `[app for app in apps if app.status == "approved"]` |
+| **List Comprehensions** | Filtering open internships, student apps, company apps |
+| **`filter()` + `map()`** | Used in `Instructor` to build per-student status reports |
+| **`reduce()`** | Used in `Instructor.generate_report()` to total application count |
+| **`any()`** | Used in `Student.apply()` and `Company.post_intern()` for duplicate checks |
 
 ---
 
@@ -214,11 +220,13 @@ The SQLite database will be created automatically on first launch.
 
 ## 🧪 Edge Cases Handled
 
-- Student cannot apply to the same internship twice
+- Student cannot apply to the same internship twice (checked at both model and database layers)
 - Empty internship listings handled gracefully
 - Invalid login credentials show error messages
 - Applications cannot be submitted after a deadline
 - Instructor view is read-only (cannot modify data)
+- Company can action multiple applications per session without the window closing
+- Approve/Reject buttons are hidden for applications already actioned
 
 ---
 
